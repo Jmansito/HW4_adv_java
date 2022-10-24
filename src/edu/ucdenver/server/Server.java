@@ -22,86 +22,76 @@ public class Server implements Runnable {
         Server.port = port;
         Server.backlog = backlog;
         morse = new Morse();
+        try{
+            socketServer = new ServerSocket(port, backlog);
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     private Socket waitForConnection() throws IOException {
-
-    //    displayMessage("Waiting for connection\n");
         connection = socketServer.accept();
-    //    displayMessage("Connection " + connectionCounter + " received from: " + connection.getInetAddress().getHostName());
         return connection;
     }
 
     public static void main(String[] args) {
-
         Runnable task = new Server(port, backlog);
         Thread t1 = new Thread(task);
         t1.start();
-
     }
 
     @Override
     public void run() {
+
+        // binding is done here
+        Socket client = null;
+        BufferedReader input = null;
+        PrintWriter output = null;
+        String newMessage;
+
         try {
-            // binding is done here
-            socketServer = new ServerSocket(port, backlog);
-            Socket client = null;
-            BufferedReader input = null;
-            PrintWriter output = null;
-            String newMessage;
+            // bind -> listen -> accept -> terminate
+            client = waitForConnection();
+            input = getInputStream(client);
+            output = getOutputStream(client);
 
-         //   while (true){
-                try {
-                    // bind -> listen -> accept -> terminate
-                    client = waitForConnection();
-                    input = getInputStream(client);
-                    output = getOutputStream(client);
-
-                    // Listen for requests
-                    String message = input.readLine();
-                    System.out.println("Message received: " + message);
-//                   System.out.println("PROCESSING MESSAGE");
-                    newMessage = processClientMessage(message);
-//                    System.out.println("DISPLAYING MESSAGE");
-                    displayMessage(newMessage);
-//                    System.out.println("SENDING MESSAGE");
-                    sendMessage(newMessage, output);
-
-
+            // Listen for requests
+            String message = input.readLine();
+            System.out.println("Message received: " + message);
+            newMessage = processClientMessage(message);
+            displayMessage(newMessage);
+            sendMessage(newMessage, output);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            System.out.println("Terminating connection");
+            try{
+                closeConnection(client, input, output);
+                ++connectionCounter;
+                try{
+                    socketServer.close();
                 }
-
-                catch (Exception e){
+                catch(Exception e){
                     e.printStackTrace();
                 }
-                finally{
-                    System.out.println("Terminating connection");
-                    try{
-                        closeConnection(client, input, output);
-                        ++connectionCounter;
-                    }
-                    catch(Exception e){
-                        socketServer.close();
-                        e.printStackTrace();
-                    }
-                }
-         //   }
-        }
+            }
+            catch(Exception e){
 
-        catch (IOException ioe){
-            System.err.println(ioe);
+                e.printStackTrace();
+            }
         }
     }
 
     private void displayMessage(final String message){System.out.println("[SER]" + message);}
 
     private PrintWriter getOutputStream(Socket socket) throws IOException {
-        PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-        return output;
+        return new PrintWriter(socket.getOutputStream(), true);
     }
 
     private BufferedReader getInputStream(Socket socket) throws IOException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        return input;
+        return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     private void closeConnection(Socket socket, BufferedReader input, PrintWriter output){
@@ -135,19 +125,13 @@ public class Server implements Runnable {
             newMessage = process.encode(processed);
 
         }
-        else if(message.charAt(0)=='D'){
+        if(message.charAt(0)=='D'){
             String[] toProcess = message.split("|");
             for(int i = 2; i < toProcess.length; i++){
                     processed += toProcess[i];
             }
             newMessage = process.decode(processed);
         }
-        else newMessage = "NOTHING";
-
-
-
-
-
         return newMessage;
     }
 }
