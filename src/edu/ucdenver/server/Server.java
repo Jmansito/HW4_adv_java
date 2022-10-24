@@ -7,71 +7,92 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.logging.Handler;
 
 public class Server implements Runnable {
 
-    private int port;
-    private int backlog;
+    private static int port;
+    private static int backlog;
     private int connectionCounter;
     private Socket connection = null;
     private ServerSocket socketServer = null;
     private Morse morse;
 
     public Server(int port, int backlog){
-        this.port = port;
-        this.backlog = backlog;
+        Server.port = port;
+        Server.backlog = backlog;
         morse = new Morse();
     }
 
     private Socket waitForConnection() throws IOException {
 
-        displayMessage("Waiting for connection\n");
+    //    displayMessage("Waiting for connection\n");
         connection = socketServer.accept();
-        displayMessage("Connection " + connectionCounter + " received from: " + connection.getInetAddress().getHostName());
+    //    displayMessage("Connection " + connectionCounter + " received from: " + connection.getInetAddress().getHostName());
         return connection;
     }
 
+    public static void main(String[] args) {
+
+        Runnable task = new Server(port, backlog);
+        Thread t1 = new Thread(task);
+        t1.start();
+
+    }
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        String message = scanner.nextLine();
-        BufferedReader input = null;
-        PrintWriter output = null;
-
         try {
-            connection = waitForConnection();
+            // binding is done here
             socketServer = new ServerSocket(port, backlog);
-            while (true) {
+            Socket client = null;
+            BufferedReader input = null;
+            PrintWriter output = null;
+            String newMessage;
+
+         //   while (true){
                 try {
-                    input = getInputStream(connection); // get input & output streams
-                    output = getOutputStream(connection);
+                    // bind -> listen -> accept -> terminate
+                    client = waitForConnection();
+                    input = getInputStream(client);
+                    output = getOutputStream(client);
+
+                    // Listen for requests
+                    String message = input.readLine();
+                    System.out.println("Message received: " + message);
+//                   System.out.println("PROCESSING MESSAGE");
+                    newMessage = processClientMessage(message);
+//                    System.out.println("DISPLAYING MESSAGE");
+                    displayMessage(newMessage);
+//                    System.out.println("SENDING MESSAGE");
+                    sendMessage(newMessage, output);
+
 
                 }
-                catch (EOFException eofException) {
-                    displayMessage("\nServer terminated connection");
-                }
-                finally
-                {
-                    closeConnection(connection, input, output); // close connection
-                    ++connectionCounter;
-                }
-            }
-        }
-        catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-    }
 
-    private void displayMessage(String message){
-        SwingUtilities.invokeLater(
-                new Runnable(){
-                    public void run(){
-                        displayMessage(message);
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                finally{
+                    System.out.println("Terminating connection");
+                    try{
+                        closeConnection(client, input, output);
+                        ++connectionCounter;
+                    }
+                    catch(Exception e){
+                        socketServer.close();
+                        e.printStackTrace();
                     }
                 }
-        );
+         //   }
+        }
+
+        catch (IOException ioe){
+            System.err.println(ioe);
+        }
     }
+
+    private void displayMessage(final String message){System.out.println("[SER]" + message);}
 
     private PrintWriter getOutputStream(Socket socket) throws IOException {
         PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
@@ -95,14 +116,38 @@ public class Server implements Runnable {
     }
 
     private void sendMessage(String message, PrintWriter output){
-        output.write("SERVER>>> " + message);
+        output.write(message);
         output.flush();
-        displayMessage("\nSERVER>>> " + message);
+        displayMessage(message);
     }
 
     protected String processClientMessage(String message){
 
+        Morse process = new Morse();
+        String newMessage = "";
+        String processed = "";
 
-        return message;
+        if(message.charAt(0)=='E'){
+            String[] toProcess = message.split("|");
+            for(int i = 2; i < toProcess.length; i++){
+                processed += toProcess[i];
+            }
+            newMessage = process.encode(processed);
+
+        }
+        else if(message.charAt(0)=='D'){
+            String[] toProcess = message.split("|");
+            for(int i = 2; i < toProcess.length; i++){
+                    processed += toProcess[i];
+            }
+            newMessage = process.decode(processed);
+        }
+        else newMessage = "NOTHING";
+
+
+
+
+
+        return newMessage;
     }
 }
