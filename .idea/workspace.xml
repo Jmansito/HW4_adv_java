@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f0f4814c-2fcc-49de-b3ce-a954132aaa5b" name="Changes" comment="updated with tests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/morse/Morse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/morse/Morse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/server/TestClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/server/TestClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +41,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.SingleServer">
+  <component name="RunManager" selected="Application.TestClient">
     <configuration name="Morse" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="edu.ucdenver.morse.Morse" />
       <module name="HW4" />
@@ -86,7 +88,9 @@
       <workItem from="1666413485156" duration="104000" />
       <workItem from="1666630214187" duration="287000" />
       <workItem from="1666630684968" duration="46000" />
-      <workItem from="1666642863022" duration="2135000" />
+      <workItem from="1666642863022" duration="18640000" />
+      <workItem from="1666714767188" duration="1051000" />
+      <workItem from="1666732979104" duration="1848000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1666284431276</created>
@@ -109,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666630233745</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="updated with tests">
+      <created>1666646094086</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1666646094086</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -139,6 +150,10 @@
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.ArrayIndexOutOfBoundsException" package="java.lang" />
           <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.net.SocketException" package="java.net" />
+          <option name="timeStamp" value="10" />
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>

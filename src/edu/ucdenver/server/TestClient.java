@@ -133,7 +133,7 @@ public class TestClient {
 
     public static void main(String[] args) {
         testSequential();
-        testSequential();
+       // testSequential();
         System.out.println("Main Ended");
     }
 

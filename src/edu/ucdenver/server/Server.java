@@ -1,32 +1,23 @@
 package edu.ucdenver.server;
-
 import edu.ucdenver.morse.Morse;
-
-import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
-import java.util.logging.Handler;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Server implements Runnable {
 
     private static int port;
     private static int backlog;
     private int connectionCounter;
-    private Socket connection = null;
-    private ServerSocket socketServer = null;
-    private Morse morse;
+    private Socket connection;
+    private ServerSocket socketServer;
 
     public Server(int port, int backlog){
         Server.port = port;
         Server.backlog = backlog;
-        morse = new Morse();
-        try{
-            socketServer = new ServerSocket(port, backlog);
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-        }
+
     }
 
     private Socket waitForConnection() throws IOException {
@@ -44,43 +35,50 @@ public class Server implements Runnable {
     public void run() {
 
         // binding is done here
-        Socket client = null;
         BufferedReader input = null;
         PrintWriter output = null;
         String newMessage;
 
+
         try {
             // bind -> listen -> accept -> terminate
-            client = waitForConnection();
-            input = getInputStream(client);
-            output = getOutputStream(client);
+            socketServer = new ServerSocket(port, backlog);
 
-            // Listen for requests
-            String message = input.readLine();
-            System.out.println("Message received: " + message);
-            newMessage = processClientMessage(message);
-            displayMessage(newMessage);
-            sendMessage(newMessage, output);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        finally{
-            System.out.println("Terminating connection");
-            try{
-                closeConnection(client, input, output);
-                ++connectionCounter;
-                try{
-                    socketServer.close();
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-            catch(Exception e){
+//            input = new BufferedReader(new InputStreamReader(connection.getInputStream())); //testing
 
-                e.printStackTrace();
-            }
+               try{
+
+                   waitForConnection();
+                   //connection = socketServer.accept(); //testing
+                   input = getInputStream(connection);
+                   output = getOutputStream(connection);
+
+                   // Listen for requests
+
+
+                   String message = input.readLine();
+//            System.out.println("Message received: " + message);
+                   newMessage = processClientMessage(message);
+                   displayMessage(newMessage);
+                   sendMessage(newMessage, output);
+               }
+               catch (Exception e){
+                   e.printStackTrace();
+               }
+               finally {
+                   try {
+                       System.out.println("Terminating connection");
+                       closeConnection(connection, input, output);
+                       ++connectionCounter;
+                   }catch(Exception e){ e.printStackTrace();}
+                   try{socketServer.close();}
+                   catch(Exception e){ e.printStackTrace();}
+               }
+
+
+
+        } catch(IOException ioException){
+            ioException.printStackTrace();
         }
     }
 
@@ -101,7 +99,7 @@ public class Server implements Runnable {
             socket.close();
         }
         catch(Exception e){
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -109,29 +107,26 @@ public class Server implements Runnable {
         output.write(message);
         output.flush();
         displayMessage(message);
+
     }
 
     protected String processClientMessage(String message){
 
         Morse process = new Morse();
-        String newMessage = "";
-        String processed = "";
+        String newMessage;
 
-        if(message.charAt(0)=='E'){
-            String[] toProcess = message.split("|");
-            for(int i = 2; i < toProcess.length; i++){
-                processed += toProcess[i];
-            }
-            newMessage = process.encode(processed);
+        String[] toProcess = message.split("\\|");
 
+        if(Objects.equals(toProcess[0], "E")){
+            if(toProcess[1] == null) newMessage = "2|Invalid Message Format";
+            else {newMessage = "0|" + process.encode(toProcess[1]);}
         }
-        if(message.charAt(0)=='D'){
-            String[] toProcess = message.split("|");
-            for(int i = 2; i < toProcess.length; i++){
-                    processed += toProcess[i];
-            }
-            newMessage = process.decode(processed);
+        else if(Objects.equals(toProcess[0], "D")){
+            if(toProcess[1] == null) newMessage = "2|Invalid Message Format";
+            else {newMessage = "0|" + process.decode(toProcess[1]);}
         }
+        else newMessage = "1|Not Implemented";
+
         return newMessage;
     }
 }

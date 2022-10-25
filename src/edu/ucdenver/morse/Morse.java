@@ -9,15 +9,16 @@ public class Morse {
     // morseCharacters array A -> Z
     private final String[] morseCharacters = {".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---",
             "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--",
-            "--.."};
+            "--..", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----.", "-----"};
     private final String[] normalCharacters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-                            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+                            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2",
+                            "3", "4", "5", "6", "7", "8", "9", "0"};
 
     // Constructor for initializing
     public Morse(){
         morseToNormal = new HashMap<>();
         normalToMorse = new HashMap<>();
-        for(int i = 0; i < 26; i++){
+        for(int i = 0; i < 36; i++){
             morseToNormal.put(morseCharacters[i], normalCharacters[i]);
             normalToMorse.put(normalCharacters[i], morseCharacters[i]);
         }
