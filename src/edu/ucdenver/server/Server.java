@@ -33,31 +33,20 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-
         // binding is done here
         BufferedReader input = null;
         PrintWriter output = null;
         String newMessage;
 
-
         try {
             // bind -> listen -> accept -> terminate
             socketServer = new ServerSocket(port, backlog);
-
-//            input = new BufferedReader(new InputStreamReader(connection.getInputStream())); //testing
-
                try{
-
-                   waitForConnection();
-                   //connection = socketServer.accept(); //testing
+                   this.connection = waitForConnection();
                    input = getInputStream(connection);
                    output = getOutputStream(connection);
-
                    // Listen for requests
-
-
                    String message = input.readLine();
-//            System.out.println("Message received: " + message);
                    newMessage = processClientMessage(message);
                    displayMessage(newMessage);
                    sendMessage(newMessage, output);
@@ -74,9 +63,6 @@ public class Server implements Runnable {
                    try{socketServer.close();}
                    catch(Exception e){ e.printStackTrace();}
                }
-
-
-
         } catch(IOException ioException){
             ioException.printStackTrace();
         }
@@ -114,7 +100,6 @@ public class Server implements Runnable {
 
         Morse process = new Morse();
         String newMessage;
-
         String[] toProcess = message.split("\\|");
 
         if(Objects.equals(toProcess[0], "E")){
