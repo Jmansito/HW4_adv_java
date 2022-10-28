@@ -24,7 +24,7 @@ public class Morse {
         }
     }
 
-    public String encode(String message){
+    public synchronized String encode(String message){
         String encoded = "";
         message = message.toUpperCase();
 
@@ -42,7 +42,7 @@ public class Morse {
         return encoded;
     }
 
-    public String decode(String message){
+    public synchronized String decode(String message){
         String decoded = "";
         String morseString = "";
         for (int i = 0; i < message.length(); i++) {

@@ -8,64 +8,74 @@ import java.util.Objects;
 
 public class Server implements Runnable {
 
-    private static int port;
-    private static int backlog;
+    private  int port;
+    private  int backlog;
     private int connectionCounter;
     private Socket connection;
     private ServerSocket socketServer;
 
     public Server(int port, int backlog){
-        Server.port = port;
-        Server.backlog = backlog;
+        this.port = port;
+        this.backlog = backlog;
 
-    }
-
-    private Socket waitForConnection() throws IOException {
-        connection = socketServer.accept();
-        return connection;
-    }
-
-    public static void main(String[] args) {
-        Runnable task = new Server(port, backlog);
-        Thread t1 = new Thread(task);
-        t1.start();
-    }
-
-    @Override
-    public void run() {
-        // binding is done here
-        BufferedReader input = null;
-        PrintWriter output = null;
-        String newMessage;
-
-        try {
-            // bind -> listen -> accept -> terminate
-            socketServer = new ServerSocket(port, backlog);
-               try{
-                   this.connection = waitForConnection();
-                   input = getInputStream(connection);
-                   output = getOutputStream(connection);
-                   // Listen for requests
-                   String message = input.readLine();
-                   newMessage = processClientMessage(message);
-                   displayMessage(newMessage);
-                   sendMessage(newMessage, output);
-               }
-               catch (Exception e){
-                   e.printStackTrace();
-               }
-               finally {
-                   try {
-                       System.out.println("Terminating connection");
-                       closeConnection(connection, input, output);
-                       ++connectionCounter;
-                   }catch(Exception e){ e.printStackTrace();}
-                   try{socketServer.close();}
-                   catch(Exception e){ e.printStackTrace();}
-               }
+        try{
+            socketServer = new ServerSocket(this.port, this.backlog);
         } catch(IOException ioException){
             ioException.printStackTrace();
         }
+    }
+    private Socket waitForConnection() throws IOException {
+        this.connection = this.socketServer.accept();
+        return this.connection;
+    }
+//    public static void main(String[] args) {
+//        Runnable task = new Server(port, backlog);
+//        Thread t1 = new Thread(task);
+//        t1.start();
+//    }
+    @Override
+    public void run() {
+        BufferedReader input = null;
+        PrintWriter output = null;
+        String newMessage;
+   //     try {
+            // bind -> listen -> accept -> terminate
+//            this.socketServer = new ServerSocket(this.port, this.backlog);
+        while(true) {
+            try {
+                this.connection = waitForConnection();
+                input = getInputStream(connection);
+                output = getOutputStream(connection);
+                // Listen for requests
+                String message = input.readLine();
+                while (message != null) {
+                    newMessage = processClientMessage(message);
+                    displayMessage(newMessage);
+                    sendMessage(newMessage, output);
+                    message = input.readLine();
+                }
+            } catch (Exception e) {
+              //  e.printStackTrace();
+                break;
+            } finally {
+                try {
+                    System.out.println("Terminating connection");
+                    closeConnection(connection, input, output);
+                    ++connectionCounter;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    socketServer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+ //       }
+//        catch(IOException ioException){
+//            ioException.printStackTrace();
+//        }
     }
 
     private void displayMessage(final String message){System.out.println("[SER]" + message);}
@@ -89,28 +99,29 @@ public class Server implements Runnable {
         }
     }
 
-    private void sendMessage(String message, PrintWriter output){
-        output.write(message);
-        output.flush();
-        displayMessage(message);
-
-    }
+    private void sendMessage(String message, PrintWriter output){output.println(message);}
 
     protected String processClientMessage(String message){
 
         Morse process = new Morse();
         String newMessage;
-        String[] toProcess = message.split("\\|");
 
-        if(Objects.equals(toProcess[0], "E")){
-            if(toProcess[1] == null) newMessage = "2|Invalid Message Format";
-            else {newMessage = "0|" + process.encode(toProcess[1]);}
+        if(Objects.equals(message, "E") || Objects.equals(message, "E|")
+                || Objects.equals(message, "D|") || Objects.equals(message, "D")){
+            newMessage = "2|Invalid Message Format";
         }
-        else if(Objects.equals(toProcess[0], "D")){
-            if(toProcess[1] == null) newMessage = "2|Invalid Message Format";
-            else {newMessage = "0|" + process.decode(toProcess[1]);}
+        else {
+            String[] toProcess = message.split("\\|");
+            if(Objects.equals(toProcess[0], "E")){
+                newMessage = "0|" + process.encode(toProcess[1]);
+                //newMessage = process.encode(toProcess[1]);
+            }
+            else if(Objects.equals(toProcess[0], "D")){
+                newMessage = "0|" + process.decode(toProcess[1]);
+                //newMessage = process.decode(toProcess[1]);
+            }
+            else newMessage = "1|Not Implemented";
         }
-        else newMessage = "1|Not Implemented";
 
         return newMessage;
     }

@@ -111,7 +111,8 @@ public class TestClient {
                 String encoded, decoded;
                 String msg = "Hello World";
                 System.out.println("=============================================================================");
-                encoded = c.sendRequest("E|" + msg);
+                encoded = c.sendRequest("E|" +msg);
+          //      encoded = c.sendRequest("E|");
                 decoded = c.sendRequest("D|" + encoded);
                 System.out.printf("Message: %s%n", msg);
                 System.out.printf("Encoded: %s%n", encoded);

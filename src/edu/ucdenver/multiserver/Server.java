@@ -2,42 +2,70 @@ package edu.ucdenver.multiserver;
 
 import edu.ucdenver.morse.Morse;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Server extends edu.ucdenver.server.Server {
-    private static int port;
-    private static int backlog;
+public class Server implements Runnable {
+    private int port;
+    private int backlog;
     private int connectionCounter;
     private Boolean keepServerRunning;
+    ExecutorService executorService = Executors.newCachedThreadPool();
+
     private ServerSocket socketServer;
 
     public Server(int port, int backlog) {
-        super(port, backlog);
-    }
-
-
-    public static void main(String[] args) {
-        Morse test = new Morse();
-        Thread t1 = new Thread(new Server(port, backlog));
-        t1.start();
+        this.port = port;
+        this.backlog = backlog;
+        this.connectionCounter = 0;
+        this.keepServerRunning = true;
     }
 
     @Override
     public void run() {
 
+        try{
 
+            this.socketServer = new ServerSocket(this.port, this.backlog);
+
+            while(true){
+                try{
+                    Socket connection = this.waitForConnection();
+                    ClientWorker cw = new ClientWorker(this, connection);
+                    executorService.execute(cw);
+                }
+                catch (IOException ioe){
+                    displayMessage("Server Terminated");
+                    ioe.printStackTrace();
+                    break;
+                }
+
+            }
+        } catch(IOException ioe){
+            displayMessage("Cannot open the server");
+            shutdown();
+            ioe.printStackTrace();
+        }
     }
 
-    public void shutdown(){
-
-    }
-    private Socket waitForConnection(){
-        Socket connection = new Socket();
-//        displayMessage("Waiting for connection\n");
-//        connection = socketServer.accept();
-//        displayMessage("Connection " + connectionCounter + " received from: " + connection.getInetAddress().getHostName());
+    private Socket waitForConnection() throws IOException {
+        Socket connection = this.socketServer.accept();
+        this.connectionCounter++;
         return connection;
     }
-    private void displayMessage(String message){}
+    private void displayMessage(String message){
+        System.out.println(message);
+    }
+
+
+
+    public void shutdown(){
+        executorService.shutdown();
+    }
+
+
+
 }

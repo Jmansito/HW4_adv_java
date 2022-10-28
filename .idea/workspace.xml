@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f0f4814c-2fcc-49de-b3ce-a954132aaa5b" name="Changes" comment="updated with tests">
+      <change afterPath="$PROJECT_DIR$/hwk4.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/grade.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/morse/Morse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/morse/Morse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/ClientWorker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/ClientWorker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/server/TestClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/server/TestClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +94,11 @@
       <workItem from="1666630684968" duration="46000" />
       <workItem from="1666642863022" duration="18640000" />
       <workItem from="1666714767188" duration="1051000" />
-      <workItem from="1666732979104" duration="4023000" />
+      <workItem from="1666732979104" duration="4033000" />
+      <workItem from="1666904195739" duration="6665000" />
+      <workItem from="1666911192934" duration="3532000" />
+      <workItem from="1666974998749" duration="2758000" />
+      <workItem from="1666984415281" duration="4461000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1666284431276</created>
@@ -125,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666735067051</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="updated with tests">
+      <created>1666748011154</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1666748011154</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
