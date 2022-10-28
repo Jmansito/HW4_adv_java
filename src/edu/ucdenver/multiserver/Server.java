@@ -13,7 +13,7 @@ public class Server implements Runnable {
     private int backlog;
     private int connectionCounter;
     private Boolean keepServerRunning;
-    ExecutorService executorService = Executors.newCachedThreadPool();
+    ExecutorService executorService;
 
     private ServerSocket socketServer;
 
@@ -22,11 +22,12 @@ public class Server implements Runnable {
         this.backlog = backlog;
         this.connectionCounter = 0;
         this.keepServerRunning = true;
+
     }
 
     @Override
     public void run() {
-
+        executorService = Executors.newCachedThreadPool();
         try{
 
             this.socketServer = new ServerSocket(this.port, this.backlog);
@@ -49,6 +50,7 @@ public class Server implements Runnable {
             shutdown();
             ioe.printStackTrace();
         }
+
     }
 
     private Socket waitForConnection() throws IOException {
@@ -62,7 +64,7 @@ public class Server implements Runnable {
 
 
 
-    public void shutdown(){
+    public void shutdown(){ //TODO
         executorService.shutdown();
     }
 

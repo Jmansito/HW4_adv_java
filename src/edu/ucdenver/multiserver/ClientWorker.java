@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 
 public class ClientWorker implements Runnable{
     private Server server;
@@ -25,34 +26,52 @@ public class ClientWorker implements Runnable{
 
     @Override
     public void run() {
+        BufferedReader input;
+        PrintWriter output;
         String newMessage;
+
         displayMessage("Getting Data Streams");
-        try{
-            getOutputStream(connection);
-            getInputStream(connection);
-            sendMessage("Connected", output);
-            while(this.keepRunningClient) {
+
+     //   while(true){
+            try{
+                output = getOutputStream(connection);
+                input = getInputStream(connection);
+             //   sendMessage("Connected", output);
                 String message = input.readLine();
-                newMessage = processClientMessage(message);
-                displayMessage(newMessage);
-                sendMessage(newMessage, output);
-                if(Objects.equals(message, "T|")){
-                    sendMessage("0|", output);
-                    break;
+                while(!Objects.equals(message, "T|")) {
+            //    while(this.keepRunningClient) {
+
+                    newMessage = processClientMessage(message);
+                    displayMessage(newMessage);
+                    sendMessage(newMessage, output);
+                    message = input.readLine();
+
                 }
-            //   message = input.readLine();
+                if(Objects.equals(message, "T|")){
+                    sendMessage("0|OK", output);
+                }
+           //     closeConnection();
+            }catch(IOException e){
+            //    e.printStackTrace();
+               // break;
             }
-            closeConnection();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+            finally {
+                try {
+                    System.out.println("Terminating connection");
+                    closeConnection();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+    //    }
+
     }
 
     private String processClientMessage(String message){
         Morse process = new Morse();
         String newMessage;
 
-        if(Objects.equals(message, "T|")){
+        if(Objects.equals(message, "TERMINATE|")){
             newMessage = "TERMINATE";
             forceShutdown();
         }
@@ -64,11 +83,9 @@ public class ClientWorker implements Runnable{
             String[] toProcess = message.split("\\|");
             if(Objects.equals(toProcess[0], "E")){
                 newMessage = "0|" + process.encode(toProcess[1]);
-                //newMessage = process.encode(toProcess[1]);
             }
             else if(Objects.equals(toProcess[0], "D")){
                 newMessage = "0|" + process.decode(toProcess[1]);
-                //newMessage = process.decode(toProcess[1]);
             }
             else newMessage = "1|Not Implemented";
         }
@@ -96,6 +113,6 @@ public class ClientWorker implements Runnable{
     private void displayMessage(String message){System.out.println(message);}
 
     protected void forceShutdown(){
-
+        //TODO
     }
 }
