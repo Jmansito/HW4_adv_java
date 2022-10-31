@@ -6,7 +6,7 @@ public class Morse {
 
     private HashMap<String, String> morseToNormal;
     private HashMap<String, String> normalToMorse;
-    // morseCharacters array A -> Z
+    // morseCharacters array A -> Z and 0 -> 9
     private final String[] morseCharacters = {".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---",
             "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--",
             "--..", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----.", "-----"};
@@ -18,12 +18,14 @@ public class Morse {
     public Morse(){
         morseToNormal = new HashMap<>();
         normalToMorse = new HashMap<>();
+        // Making sure to build the hashmap for both conversions
         for(int i = 0; i < 36; i++){
             morseToNormal.put(morseCharacters[i], normalCharacters[i]);
             normalToMorse.put(normalCharacters[i], morseCharacters[i]);
         }
     }
 
+    // Encoding method to convert English to morse code using normalToMorse hashmap
     public synchronized String encode(String message){
         String encoded = "";
         message = message.toUpperCase();
@@ -42,6 +44,7 @@ public class Morse {
         return encoded;
     }
 
+    // Decoding method to convert morse code to English using morseToNormal hashmap
     public synchronized String decode(String message){
         String decoded = "";
         String morseString = "";
@@ -58,6 +61,7 @@ public class Morse {
     }
 
 
+    //Main to test the methods
     public static void main(String[] args) {
         Morse test = new Morse();
         String testString = "Hello World";

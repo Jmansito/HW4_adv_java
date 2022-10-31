@@ -18,12 +18,17 @@ public class ClientWorker implements Runnable{
     private PrintWriter output;
     private BufferedReader input;
 
+    // Constructor for client worker
     public ClientWorker(Server server, Socket socket){
         this.connection = socket;
         this.server = server;
         this.keepRunningClient = true;
     }
 
+    // Run method for client worker
+    // Will open the streams first, then take in the first line from the client
+    // The loop will continue until a termination command is sent
+    // Process every message and send back the server message to the client using the Morse class
     @Override
     public void run() {
         BufferedReader input;
@@ -42,8 +47,8 @@ public class ClientWorker implements Runnable{
                     newMessage = processClientMessage(message);
                     if(Objects.equals(message, "T|")){
                         sendMessage("0|OK", output);
-                        this.keepRunningClient = false;
-                        break;
+                        this.keepRunningClient = false; // while loop ends
+                        break; // break out of loop so that the rest does not finish
                     }
                     displayMessage(newMessage);
                     sendMessage(newMessage, output);
@@ -66,13 +71,19 @@ public class ClientWorker implements Runnable{
             }
     }
 
+    // Processing the message with if conditions
+    // Check for terminate and invalid format first
+    // If valid format, the message will be split and checked for E or D
+    // E -> Encore
+    // D -> Decode
+    // Else, not implemented message assigned
     private String processClientMessage(String message) throws IOException, InterruptedException {
         Morse process = new Morse();
         String newMessage;
 
         if(Objects.equals(message, "TERMINATE|")){
             newMessage = "TERMINATE";
-            Server.shutdown();
+            Server.shutdown(); //statically start the server shutdown process
         }
         else if(Objects.equals(message, "E") || Objects.equals(message, "E|")
                 || Objects.equals(message, "D|") || Objects.equals(message, "D")){
@@ -91,7 +102,7 @@ public class ClientWorker implements Runnable{
         return newMessage;
     }
 
-
+    // output and input stream builders
     private PrintWriter getOutputStream(Socket socket) throws IOException {
         return new PrintWriter(socket.getOutputStream(), true);
 
@@ -101,6 +112,7 @@ public class ClientWorker implements Runnable{
         return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
+    // Closing connections and catching exceptions
     private void closeConnection(){
         try{this.input.close();} catch(IOException|NullPointerException e){e.printStackTrace();}
         try{this.output.close();} catch(NullPointerException e){e.printStackTrace();}
@@ -111,6 +123,7 @@ public class ClientWorker implements Runnable{
 
     private void displayMessage(String message){System.out.println(message);}
 
+    // forceShutdown is being called from Server to shutdown each clientworker connection
     protected void forceShutdown() throws IOException {
         this.keepRunningClient = false;
         connection.close();

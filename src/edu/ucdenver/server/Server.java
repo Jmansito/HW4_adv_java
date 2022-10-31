@@ -14,6 +14,7 @@ public class Server implements Runnable {
     private Socket connection;
     private ServerSocket socketServer;
 
+    // constructor, experimenting with creating the socket here instead of in run. It was working both ways.
     public Server(int port, int backlog){
         this.port = port;
         this.backlog = backlog;
@@ -28,11 +29,9 @@ public class Server implements Runnable {
         this.connection = this.socketServer.accept();
         return this.connection;
     }
-//    public static void main(String[] args) {
-//        Runnable task = new Server(port, backlog);
-//        Thread t1 = new Thread(task);
-//        t1.start();
-//    }
+
+    // Run will build the connection as long as it is getting requests
+    // Will loop the requests and process each one, then send the correct message back to the client
     @Override
     public void run() {
         BufferedReader input = null;
@@ -60,13 +59,13 @@ public class Server implements Runnable {
             } finally {
                 try {
                     System.out.println("Terminating connection");
-                    closeConnection(connection, input, output);
+                    closeConnection(connection, input, output); // close connection here when it is done looping
                     ++connectionCounter;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 try {
-                    socketServer.close();
+                    socketServer.close(); // then finally close the socket
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,6 +100,7 @@ public class Server implements Runnable {
 
     private void sendMessage(String message, PrintWriter output){output.println(message);}
 
+    // Simple process client: Check the message and if it is valid, encode or decode.
     protected String processClientMessage(String message){
 
         Morse process = new Morse();
