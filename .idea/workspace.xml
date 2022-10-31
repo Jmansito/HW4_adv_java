@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f0f4814c-2fcc-49de-b3ce-a954132aaa5b" name="Changes" comment="multiserver updated">
+    <list default="true" id="f0f4814c-2fcc-49de-b3ce-a954132aaa5b" name="Changes" comment="Working multiserver">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hwk4.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/ClientWorker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/ClientWorker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/edu/ucdenver/multiserver/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/grade.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +93,9 @@
       <workItem from="1666904195739" duration="6665000" />
       <workItem from="1666911192934" duration="3532000" />
       <workItem from="1666974998749" duration="2758000" />
-      <workItem from="1666984415281" duration="9575000" />
+      <workItem from="1666984415281" duration="10399000" />
+      <workItem from="1667146532466" duration="2046000" />
+      <workItem from="1667249966562" duration="4528000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1666284431276</created>
@@ -146,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666994665021</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Working multiserver">
+      <created>1666999943007</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1666999943007</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,7 +176,8 @@
     <MESSAGE value="updated part 2" />
     <MESSAGE value="updated with tests" />
     <MESSAGE value="multiserver updated" />
-    <option name="LAST_COMMIT_MESSAGE" value="multiserver updated" />
+    <MESSAGE value="Working multiserver" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working multiserver" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

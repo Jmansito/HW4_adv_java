@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 public class ClientWorker implements Runnable{
     private Server server;
     private Socket connection;
-    private Morse morse;
     private Boolean keepRunningClient;
     private PrintWriter output;
     private BufferedReader input;
@@ -32,28 +32,29 @@ public class ClientWorker implements Runnable{
 
         displayMessage("Getting Data Streams");
 
-     //   while(true){
             try{
                 output = getOutputStream(connection);
                 input = getInputStream(connection);
-             //   sendMessage("Connected", output);
-                String message = input.readLine();
-                while(!Objects.equals(message, "T|")) {
-            //    while(this.keepRunningClient) {
 
+                String message = input.readLine();
+                // Will stop listening to messages when client sends T|
+                while(this.keepRunningClient) {
                     newMessage = processClientMessage(message);
+                    if(Objects.equals(message, "T|")){
+                        sendMessage("0|OK", output);
+                        this.keepRunningClient = false;
+                        break;
+                    }
                     displayMessage(newMessage);
                     sendMessage(newMessage, output);
                     message = input.readLine();
 
                 }
-                if(Objects.equals(message, "T|")){
-                    sendMessage("0|OK", output);
-                }
-           //     closeConnection();
-            }catch(IOException e){
+
+
+            }catch(IOException | InterruptedException e){
             //    e.printStackTrace();
-               // break;
+
             }
             finally {
                 try {
@@ -63,17 +64,15 @@ public class ClientWorker implements Runnable{
                     e.printStackTrace();
                 }
             }
-    //    }
-
     }
 
-    private String processClientMessage(String message){
+    private String processClientMessage(String message) throws IOException, InterruptedException {
         Morse process = new Morse();
         String newMessage;
 
         if(Objects.equals(message, "TERMINATE|")){
             newMessage = "TERMINATE";
-            forceShutdown();
+            Server.shutdown();
         }
         else if(Objects.equals(message, "E") || Objects.equals(message, "E|")
                 || Objects.equals(message, "D|") || Objects.equals(message, "D")){
@@ -112,7 +111,8 @@ public class ClientWorker implements Runnable{
 
     private void displayMessage(String message){System.out.println(message);}
 
-    protected void forceShutdown(){
-        //TODO
+    protected void forceShutdown() throws IOException {
+        this.keepRunningClient = false;
+        connection.close();
     }
 }
